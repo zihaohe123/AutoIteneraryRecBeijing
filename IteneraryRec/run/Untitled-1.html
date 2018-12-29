@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+    body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=RgQ9N7mjmwVFVg9lwoYB7Gfv8csNtifG"></script>
+    <title>路线展示</title>
+</head>
+<body>
+    <div id="allmap">
+
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    // 百度地图API功能
+    var map = new BMap.Map("allmap");    // 创建Map实例
+    map.centerAndZoom(new BMap.Point([116.25224771684978, 40.04030740098714]), 15);
+
+    //添加地图类型控件
+    map.addControl(new BMap.MapTypeControl({
+        mapTypes:[
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]}));	  
+    map.setCurrentCity("北京");          // 设置地图显示的城市 此项是必须设置的
+    map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+    var data_info = [
+[116.25224771684978,40.04030740098714,"北京市海淀区今日头条总部"],
+[116.2748443798831,39.99857259174415,"颐和园"],
+[116.31899945765805,40.00669513011689,"圆明园"],
+[116.34236406388466,40.00536045543081,"清华大学美术馆"],
+[116.33095022162505,40.00686825494379,"清华园"],
+[116.50167519665658,39.991272603538015,"798艺术区"],
+[116.61340800711784,40.092836981223236,"北京市首都机场T2航站楼"]
+                    ];
+    var opts = {
+                width : 250,     // 信息窗口宽度
+                height: 80,     // 信息窗口高度
+                title : "信息窗口" , // 信息窗口标题
+                enableMessage:true//设置允许信息窗发送短息
+               };
+    for(var i=0;i<data_info.length;i++){
+        var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]));  // 创建标注
+        if (i==0){
+            var label = new BMap.Label("起点",{offset:new BMap.Size(-30,-10)});
+            marker.setLabel(label);
+        }
+        if (i==data_info.length-1){
+            var label = new BMap.Label("终点",{offset:new BMap.Size(20,-10)});
+            marker.setLabel(label);
+        }
+        var content = data_info[i][2];
+        map.addOverlay(marker);               // 将标注添加到地图中
+        addClickHandler(content,marker);
+    }
+    function addClickHandler(content,marker){
+        marker.addEventListener("click",function(e){
+            openInfo(content,e)}
+        );
+    }
+    function openInfo(content,e){
+        var p = e.target;
+        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+        var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象 
+        map.openInfoWindow(infoWindow,point); //开启信息窗口
+    }
+
+</script>
